@@ -1,0 +1,64 @@
+body {
+  background: linear-gradient(
+    to right,                     
+    rgb(11, 102, 207),           
+    rgb(71, 165, 145),           
+    rgb(88, 160, 179)            
+  );
+  height: 100vh;              
+  margin: 0;
+}
+
+
+button {
+  margin-left: 5px;
+  padding: 10px;
+  font-size: 1rem;
+}
+ 
+.container-centrale {
+  display: flex;
+  flex-direction: column;  /* empiler température et icône */
+  justify-content: center; /* centre verticalement */
+  align-items: center;     /* centre horizontalement */
+  height: 100vh;
+}
+
+#meteo-icon {
+  font-size: 10rem; /* taille de l’icône adaptée */
+  color: rgb(226, 206, 24);
+  margin-bottom: 20px; /* espace avec la température */
+}
+
+
+.footer {
+  display: flex;
+  justify-content: space-around;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 10px;
+}
+
+
+.footer i {
+  color: aliceblue;
+  font-size: 5rem; /* inutile pour <i>, géré par font-size */
+}
+
+p {
+  color: aliceblue;
+  font-size: 80px;
+  margin: 0; /* évite le margin par défaut */
+}
+
+
+@media (max-width: 600px) {
+  #meteo-icon {
+    font-size: 6rem;
+  }
+
+  p {
+    font-size: 2rem;
+  }
+}
