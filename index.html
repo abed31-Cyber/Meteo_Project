@@ -1,28 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
-    <title>Meteo Project</title>
+    <title>projet Méteo</title>
 </head>
+
 <body>
     <main>
-<div class="container">
+        <section class="search-form-section">
+            <form action="" name="search-form">
+                <div class="form-input">
+                    <input type="text" name="search-city" id="search-city" placeholder=" Ville...">
+                    <button type="submit" class="search"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    <input type="text" name="latitude" class="latitude-input" placeholder="Latitude...">
+                    <input type="text" name="Longitude" class="longitude-input" placeholder="Longitude...">
+                </div>
 
-</div>
+            </form>
+        </section>
 
 
+        <section class="weather-infos">
 
+        </section>
+        <section class="geoloc">
 
-
-  
+            <p>Chez moi ?</p>
+            <button class="btn-geoloc"><i class="fa-solid fa-location-dot"></i></button>
+        </section>
     </main>
 
 
 
-    <script src="script.js"></script>
+
+
+
+
+    <script src="script.js" type="module"></script>
 </body>
+
 </html>
