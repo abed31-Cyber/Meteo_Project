@@ -17,10 +17,13 @@ async function getCoordsByCityName(CityName) {
         longitude: longitude
     }
     console.log(cityCoords_array)
+    return cityCoords_array;
 
 }
 
-async function getweatherInfos(longitude, latitude) {
+
+
+async function getWeatherInfos(longitude, latitude) {
 
     const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&models=meteofrance_seamless&current=temperature_2m,is_day,rain,snowfall,cloud_cover,wind_speed_10m`);
     const weatherInfos = await response.json();
@@ -32,7 +35,8 @@ async function getweatherInfos(longitude, latitude) {
 
 
 async function getCityNameByCoords(longitude, latitude) {
-
+    console.log("Latitude recu : ", latitude);
+    console.log("Latitude recu : ", longitude);
     const response = await fetch(` https://us1.locationiq.com/v1/reverse?key=${apiKey}&lat=${latitude}&lon=${longitude}&format=json&`);
     const cityInfos = await response.json();
     console.log("getCityNameByCoords:donnée retournée ", cityInfos);
@@ -42,6 +46,19 @@ async function getCityNameByCoords(longitude, latitude) {
     return cityName;
 }
 
+async function getWeatherIcon(weatherInfos) {
+    if (weatherInfos.current.snowfall > 0) {
+        return "/images/neige.png";
+    }else if (weatherInfos.current.rain > 0) {
+        return "/images/pluvieux."
+    }else if (weatherInfos.current.cloud_cover > 65) {
+        return "/images/soleil-leger-nuage.png";
+    }else if (weatherInfos.current.cloud_cover > 85) {
+        return "/images/pluvieux.png";
+    }else {
+        return "/images/soleil.png";
+    }
+}
 
 
 async function createWeatherInfosCards(weatherInfo, cityName) {
@@ -49,7 +66,7 @@ async function createWeatherInfosCards(weatherInfo, cityName) {
     const weatherInfosContainer = document.createElement('div');
     // creation des elements necésaire
     const cityName_elem = document.createElement('h1');
-    const iconeWeather_elem = document.createElement('i')
+    const iconeWeather_elem = document.createElement('img')
     const cityTemperature_elem = document.createElement("h1");
     // ajout de classe sur les element
     weatherInfosContainer.classList.add('weather-infos-container');
@@ -59,6 +76,7 @@ async function createWeatherInfosCards(weatherInfo, cityName) {
 
     // insertion des données dans les elements 
     cityName_elem.innerText = cityName;
+    iconeWeather_elem.setAttribute("src", await getWeatherIcon(weatherInfo));
     cityTemperature_elem.innerText = weatherInfo.current.temperature_2m + "°C";
     //insertion des elements dans le container
     weatherInfosContainer.appendChild(cityName_elem);
@@ -71,6 +89,63 @@ async function createWeatherInfosCards(weatherInfo, cityName) {
     return weatherInfosContainer;
 
 };
+
+function displayWeatherInfosByCity() {
+    // on recupere le formulaire par son name
+    const form = document.querySelector('#search-form');
+    // on écoute l'event submit sur le form
+    form.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        // On recupère l'input de recherche
+        const formData = new FormData(form);
+        const searchValue = formData.get("search-city");
+        console.log("Resultat de recherche utilisateur : ", searchValue);
+        const cityName = searchValue;
+        const cityCoords = await getCoordsByCityName(cityName);
+        console.log("Coordonnées retournés par recherche par ville : ", cityCoords);
+        const cityLatitude = cityCoords.latitude;
+        const cityLongitude = cityCoords.longitude;
+        const weatherInfos = await getWeatherInfos(cityLongitude, cityLatitude);
+        console.log("weather infos by cityname: " , weatherInfos);
+        // on recupere la cards contenant les infos weather.
+        const weatherInfosCard = await createWeatherInfosCards(weatherInfos, cityName);
+        // je recupere ma section weatherInfos 
+        const weatherInfoSection = document.querySelector('.weather-infos');
+        // j'insere la card dans  ma section.
+        weatherInfoSection.appendChild(weatherInfosCard);
+
+    })
+
+}
+
+function displayWeatherInfosByCoords() {
+
+const form = document.querySelector('#search-form')   
+form.addEventListener('submit', async function (event){
+event.preventDefault();
+const formData = new FormData(form);
+const cityLatitude = formData.get('latitude');
+const cityLongitude = formData.get('longitude');
+console.log("Latitude rechercher : ", cityLatitude)
+console.log("Longitude rechercher : ", cityLongitude)
+
+const weatherInfos = await getWeatherInfos(cityLongitude, cityLatitude);
+const cityName = await getCityNameByCoords(cityLongitude, cityLatitude);
+console.log(cityName);
+
+const weatherInfosCard = await createWeatherInfosCards(weatherInfos, cityName);
+const weatherInfosSection = document.querySelector('.weather-infos');
+
+weatherInfosSection.appendChild(weatherInfosCard);
+
+})
+
+}
+
+function main() {
+
+}
+// EXEC
 
 
 
@@ -85,9 +160,18 @@ async function createWeatherInfosCards(weatherInfo, cityName) {
 // const cityLat = cityInfos.latitude
 
 async function debugTest() {
-    const weatherInfo = await getweatherInfos("35.69906", "-0.63588");
-    const cityName = await getCityNameByCoords("35.69906", "-0.63588");
-    createWeatherInfosCards(weatherInfo, cityName);
+    // const weatherInfo = await getWeatherInfos("35.69906", "-0.63588");
+    // const cityName = await getCityNameByCoords("35.69906", "-0.63588");
+    // createWeatherInfosCards(weatherInfo, cityName);
+    displayWeatherInfosByCity();
+    displayWeatherInfosByCoords();
 }
 
 debugTest();
+
+
+
+
+
+
+
