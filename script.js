@@ -142,9 +142,43 @@ weatherInfosSection.appendChild(weatherInfosCard);
 
 }
 
-function main() {
+function getUserGeoloc() {
+
+    return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+            (position => {
+                const userLatitude = position.coords.latitude;
+                const userLongitude = position.coords.longitude;
+                resolve({ userLatitude, userLongitude});
+                console.log(resolve) ;
+
+            }),
+            reject
+        );
+        
+    });
+}
+
+function displayweatherInfosByGeoloc(){
+
+    const btnGeoloc = document.querySelector('.btn-geoloc');
+    btnGeoloc.addEventListener('click', async function(){
+
+        const userPosition = await getUserGeoloc();
+        console.log("Position utilisateur ", userPosition);
+        // recuperation des position utilisateur latitude et longitude
+        const userLatitude = userPosition.userLatitude;
+        const userLongitude = userPosition.userLongitude;
+        const weatherInfo = await getWeatherInfos(userLongitude, userLatitude);
+
+        const cityName = await getCityNameByCoords(userLongitude, userLatitude);
+        const weatherInfosCard = await createWeatherInfosCards(weatherInfo, cityName);
+        const weatherInfoSection = document.querySelector('.weather-infos');
+        weatherInfoSection.appendChild(weatherInfosCard);
+        })
 
 }
+
 // EXEC
 
 
@@ -165,6 +199,7 @@ async function debugTest() {
     // createWeatherInfosCards(weatherInfo, cityName);
     displayWeatherInfosByCity();
     displayWeatherInfosByCoords();
+    displayweatherInfosByGeoloc();
 }
 
 debugTest();
